@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e1e2f, #2a2a4e);
+      padding: 20px;
+      transition: background 0.5s ease;
+    }
+
+    body.light-mode {
+      background: linear-gradient(135deg, #5e81ac, #88c0d0);
+    }
+
+    .weather-app {
+      background: rgba(30, 30, 46, 0.7);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      color: #e0e0e0;
+      width: 100%;
+      max-width: 400px;
+      transition: all 0.3s ease;
+      animation: fadeIn 0.5s ease-out;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .weather-app.light-mode {
+      background: rgba(255, 255, 255, 0.2);
+      color: #2e3440;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      color: #81a1c1;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1) rotate(360deg);
+      color: #88c0d0;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 30px;
+      padding: 10px 15px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .search-box:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.02);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: #e0e0e0;
+      flex: 1;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .search-box input::placeholder {
+      color: rgba(224, 224, 224, 0.6);
+    }
+
+    .search-box button {
+      background: transparent;
+      border: none;
+      color: #81a1c1;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .search-box button:hover {
+      transform: scale(1.2) rotate(10deg);
+      color: #88c0d0;
+    }
+
+    .weather-icon {
+      font-size: 80px;
+      margin: 10px 0;
+      animation: bounceIn 0.6s ease-out;
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.1); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .temperature {
+      font-size: 48px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #88c0d0;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .location {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #d8dee9;
+      animation: slideIn 0.5s ease-out 0.1s;
+    }
+
+    .description {
+      font-size: 18px;
+      text-transform: capitalize;
+      margin-bottom: 10px;
+      color: #a3be8c;
+      animation: slideIn 0.5s ease-out 0.2s;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .details, .forecast {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .detail-box, .forecast-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .detail-box:hover, .forecast-box:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .detail-box h2, .forecast-box h2 {
+      font-size: 16px;
+      margin-bottom: 8px;
+      color: #81a1c1;
+      opacity: 0.9;
+    }
+
+    .detail-box h3, .forecast-box h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #d8dee9;
+    }
+
+    .forecast-box .weather-icon {
+      font-size: 40px;
+    }
+
+    .error {
+      color: #bf616a;
+      margin: 15px 0;
+      font-size: 14px;
+      animation: shake 0.5s ease;
+      display: none;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .loading {
+      font-size: 16px;
+      margin: 15px 0;
+      color: rgba(216, 222, 233, 0.8);
+      display: none;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #81a1c1;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.05) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 8px;
+      color: transparent !important;
+    }
+
+    .skeleton-text {
+      height: 20px;
+      margin: 10px 0;
+    }
+
+    .skeleton-icon {
+      height: 80px;
+      margin: 10px 0;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @media (max-width: 600px) {
+      .weather-app {
+        max-width: 100%;
+        padding: 15px;
+      }
+
+      .temperature {
+        font-size: 36px;
+      }
+
+      .weather-icon {
+        font-size: 60px;
+      }
+
+      .location {
+        font-size: 20px;
+      }
+
+      .details, .forecast {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">☀️</button>
+  <div class="weather-app">
+    <div class="search-box">
+      <input type="text" id="aa" placeholder="Enter City Name" />
+      <button onclick="getdetails()">🔍</button>
+    </div>
+    <div id="status"></div>
+    <div class="weather-main">
+      <div class="weather-icon skeleton" id="weatherIcon">☀️</div>
+      <div class="temperature skeleton" id="temperature">--°C</div>
+      <div class="location skeleton" id="location">City</div>
+      <div class="description skeleton" id="description">Weather description</div>
+    </div>
+    <div class="details">
+      <div class="detail-box">
+        <h2>🌫 Humidity</h2>
+        <h3 id="bb" class="skeleton">--%</h3>
+      </div>
+      <div class="detail-box">
+        <h2>💨 Wind</h2>
+        <h3 id="cc" class="skeleton">-- km/h</h3>
+      </div>
+      <div class="detail-box">
+        <h2>🤒 Feels Like</h2>
+        <h3 id="dd" class="skeleton">--°C</h3>
+      </div>
+      <div class="detail-box">
+        <h2>🌬️ Pressure</h2>
+        <h3 id="gg" class="skeleton">-- hPa</h3>
+      </div>
+      <div class="detail-box">
+        <h2>🌅 Sunrise</h2>
+        <h3 id="ee" class="skeleton">--:--</h3>
+      </div>
+      <div class="detail-box">
+        <h2>🌇 Sunset</h2>
+        <h3 id="ff" class="skeleton">--:--</h3>
+      </div>
+    </div>
+    <div class="forecast" id="forecast">
+      <!-- Forecast boxes will be dynamically added here -->
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
